@@ -27,10 +27,25 @@ autoconfigure_tunnel() {
 }
 
 autoconfigure_nat() {
-	# add default route if gateway undefined
-	if [ -z "${GATEWAY}" -a -n "${IPADDR_OUTSIDE}" ]; then
-		/bin/ip route add default via ${IPADDR_OUTSIDE%%/*}
+
+	if [ "$3" == "up"]; then
+		# add default route if gateway undefined
+		if [ -z "${GATEWAY}" -a -n "${IPADDR_OUTSIDE}" ]; then
+			/bin/ip route add default via ${IPADDR_OUTSIDE%%/*}
+		fi
+		
+		#Accept related traffic
+		if [ "${NAT_ACCEPT_TRAFFIC}" == "1" ]; then
+			iptables -I INPUT -I ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+		fi
+		
+	elif  [ "$3" == "down"]; then
+		if [ "${NAT_ACCEPT_TRAFFIC}" == "1" ]; then
+			iptables -D INPUT -I ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+		fi
 	fi
+	
+	
 	return 0 # additional precation against "set -e" in case of future mods of this function
 }
 
@@ -40,6 +55,8 @@ autoconfigure() {
 
 	echo "Starting autoconfigure for $NSTYPE ${NSNAME}"
 	DEVNAME_INSIDE=vn-${NSNAME}1
+	DEVNAME_OUTSIDE=vn-${NSNAME}0
+	
 	source /etc/default/netns
 	! source "/etc/default/netns-${NSNAME}"
 
