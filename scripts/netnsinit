@@ -41,11 +41,11 @@ autoconfigure_nat-access() {
 	if [ "${NAT_ACCEPT_TRAFFIC}" != "1" ]; then
 		return 0
 	fi
-	if [ "$3" == "up"]; then
+	if [ "$3" == "up" ]; then
 		#Accept related traffic
 		iptables -I INPUT -I ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 		
-	elif  [ "$3" == "down"]; then
+	elif  [ "$3" == "down" ]; then
 		iptables -D INPUT -I ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 	fi
 	
