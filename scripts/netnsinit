@@ -80,7 +80,7 @@ case "$1" in
 		display_usage
 		exit 0
 		;;
-	"tunnel"|"bridge"|"nat")
+	"tunnel"|"bridge"|"nat"|"nat-access")
 		autoconfigure "$@"
 		exit 0
 		;;
