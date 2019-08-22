@@ -43,10 +43,10 @@ autoconfigure_nat-access() {
 	fi
 	if [ "$3" == "up" ]; then
 		#Accept related traffic
-		iptables -I INPUT -I ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+		iptables -I INPUT -i ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 		
 	elif  [ "$3" == "down" ]; then
-		iptables -D INPUT -I ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+		iptables -D INPUT -i ${DEVNAME_OUTSIDE} -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 	fi
 	
 	
